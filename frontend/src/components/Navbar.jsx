@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import NavSearch from "@/components/NavSearch";
 
 function SearchIcon(props) {
   return (
@@ -18,23 +18,9 @@ function SearchIcon(props) {
 export default function Navbar() {
   const { firebaseUser, profile, logout } = useAuth();
   const { count } = useCart();
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [open, setOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-  const [query, setQuery] = useState(searchParams?.get("search") || "");
-
-  useEffect(() => {
-    setQuery(searchParams?.get("search") || "");
-  }, [searchParams]);
-
-  function submitSearch(e) {
-    e.preventDefault();
-    const q = query.trim();
-    router.push(q ? `/?search=${encodeURIComponent(q)}` : "/");
-    setMobileSearchOpen(false);
-  }
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-ink/80 border-b border-ink-border">
@@ -50,19 +36,9 @@ export default function Navbar() {
           <Link href="/?category=bags" className="hover:text-porcelain transition">Bags</Link>
         </div>
 
-        {/* Search — desktop inline, always visible */}
-        <form onSubmit={submitSearch} className="hidden sm:flex flex-1 max-w-sm ml-auto">
-          <div className="relative w-full">
-            <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search products…"
-              className="w-full rounded-full bg-ink-soft border border-ink-border pl-10 pr-4 py-2 text-sm placeholder:text-muted focus:border-aurora-violet outline-none transition"
-            />
-          </div>
-        </form>
+        <Suspense fallback={<div className="hidden sm:block flex-1 max-w-sm ml-auto" />}>
+          <NavSearch variant="desktop" />
+        </Suspense>
 
         <div className="flex items-center gap-2 sm:gap-4 ml-auto sm:ml-0">
           {/* Search — mobile toggle */}
@@ -128,19 +104,9 @@ export default function Navbar() {
 
       {/* Search — mobile expanding row */}
       {mobileSearchOpen && (
-        <form onSubmit={submitSearch} className="sm:hidden px-5 pb-3 animate-slide-down">
-          <div className="relative w-full">
-            <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
-            <input
-              autoFocus
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search products…"
-              className="w-full rounded-full bg-ink-soft border border-ink-border pl-10 pr-4 py-2.5 text-sm placeholder:text-muted focus:border-aurora-violet outline-none transition"
-            />
-          </div>
-        </form>
+        <Suspense fallback={null}>
+          <NavSearch variant="mobile" onCloseMobile={() => setMobileSearchOpen(false)} />
+        </Suspense>
       )}
     </header>
   );
