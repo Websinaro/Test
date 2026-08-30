@@ -16,6 +16,7 @@ const CATEGORIES = [
 function Storefront() {
   const searchParams = useSearchParams();
   const activeCategory = searchParams.get("category") || "";
+  const searchTerm = searchParams.get("search") || "";
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +27,11 @@ function Storefront() {
     setLoading(true);
     setError("");
 
-    const query = activeCategory ? `?category=${activeCategory}` : "";
+    const params = new URLSearchParams();
+    if (activeCategory) params.set("category", activeCategory);
+    if (searchTerm) params.set("search", searchTerm);
+    const query = params.toString() ? `?${params.toString()}` : "";
+
     api
       .getProducts(query)
       .then((data) => !cancelled && setProducts(data.products))
@@ -36,54 +41,58 @@ function Storefront() {
     return () => {
       cancelled = true;
     };
-  }, [activeCategory]);
+  }, [activeCategory, searchTerm]);
+
+  const heading = searchTerm
+    ? `Results for “${searchTerm}”`
+    : activeCategory
+    ? CATEGORIES.find((c) => c.slug === activeCategory)?.label
+    : "Everything";
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative overflow-hidden border-b border-ink-border">
-        <div
-          className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-aurora-gradient opacity-20 blur-3xl"
-          aria-hidden="true"
-        />
-        <div
-          className="absolute -bottom-32 -left-16 w-80 h-80 rounded-full bg-aurora-gradient opacity-10 blur-3xl"
-          aria-hidden="true"
-        />
-        <div className="relative max-w-7xl mx-auto px-5 sm:px-8 py-20 sm:py-28 text-center">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-aurora-cyan bg-aurora-gradient-soft border border-aurora-violet/30 rounded-full px-4 py-1.5 mb-6">
-            New Season Arrivals
-          </span>
-          <h1 className="font-display text-4xl sm:text-6xl font-bold leading-tight max-w-3xl mx-auto">
-            Everyday objects, <span className="gradient-text">tomorrow&rsquo;s finish.</span>
-          </h1>
-          <p className="text-muted mt-5 max-w-xl mx-auto">
-            Considered audio, wearables, and everyday carry — designed to feel as good as they look.
-          </p>
-          <a
-            href="#shop"
-            className="inline-block mt-8 btn-gradient text-white font-semibold px-7 py-3.5 rounded-xl"
-          >
-            Shop the collection
-          </a>
-        </div>
-      </section>
+      {/* Hero — hidden while actively searching so results feel immediate */}
+      {!searchTerm && (
+        <section className="relative overflow-hidden border-b border-ink-border">
+          <div
+            className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-aurora-gradient opacity-20 blur-3xl"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute -bottom-32 -left-16 w-80 h-80 rounded-full bg-aurora-gradient opacity-10 blur-3xl"
+            aria-hidden="true"
+          />
+          <div className="relative max-w-7xl mx-auto px-5 sm:px-8 py-20 sm:py-28 text-center">
+            <span className="inline-block text-xs font-semibold tracking-widest uppercase text-aurora-cyan bg-aurora-gradient-soft border border-aurora-violet/30 rounded-full px-4 py-1.5 mb-6">
+              New Season Arrivals
+            </span>
+            <h1 className="font-display text-4xl sm:text-6xl font-bold leading-tight max-w-3xl mx-auto">
+              Everyday objects, <span className="gradient-text">tomorrow&rsquo;s finish.</span>
+            </h1>
+            <p className="text-muted mt-5 max-w-xl mx-auto">
+              Considered audio, wearables, and everyday carry — designed to feel as good as they look.
+            </p>
+            <a
+              href="#shop"
+              className="inline-block mt-8 btn-gradient text-white font-semibold px-7 py-3.5 rounded-xl"
+            >
+              Shop the collection
+            </a>
+          </div>
+        </section>
+      )}
 
       {/* Category strip + grid */}
       <section id="shop" className="max-w-7xl mx-auto px-5 sm:px-8 py-14">
         <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
-          <h2 className="font-display text-2xl font-bold">
-            {activeCategory
-              ? CATEGORIES.find((c) => c.slug === activeCategory)?.label
-              : "Everything"}
-          </h2>
+          <h2 className="font-display text-2xl font-bold">{heading}</h2>
           <div className="flex gap-2 flex-wrap">
             {CATEGORIES.map((c) => (
               <a
                 key={c.label}
                 href={c.slug ? `/?category=${c.slug}` : "/"}
                 className={`text-sm px-4 py-1.5 rounded-full border transition ${
-                  activeCategory === c.slug
+                  !searchTerm && activeCategory === c.slug
                     ? "btn-gradient text-white border-transparent"
                     : "border-ink-border text-muted hover:text-porcelain hover:border-aurora-violet/50"
                 }`}
@@ -109,7 +118,12 @@ function Storefront() {
           </div>
         )}
 
-        {!loading && !error && <ProductGrid products={products} />}
+        {!loading && !error && (
+          <ProductGrid
+            products={products}
+            emptyMessage={searchTerm ? `No products match “${searchTerm}”.` : "No products found."}
+          />
+        )}
       </section>
     </>
   );

@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { api } from "@/lib/api";
 
-const STORAGE_KEY = "nexura_dev_key";
+const KEY_STORAGE = "nexura_dev_key";
+const EMAIL_STORAGE = "nexura_dev_email";
 const EMPTY_FORM = {
   name: "",
   description: "",
+  detailedDescription: "",
   price: "",
   comparePrice: "",
   imageUrl: "",
@@ -16,10 +18,112 @@ const EMPTY_FORM = {
   isFeatured: false,
 };
 
+function DevAuthGate({ onUnlock }) {
+  const [mode, setMode] = useState("signup"); // "signup" | "login"
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError("");
+    if (!email.trim() || !password) {
+      setError("Enter both the dev email and password.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const call = mode === "signup" ? api.devSignup : api.devLogin;
+      const { token } = await call({ email: email.trim(), password });
+      onUnlock(token, email.trim());
+    } catch (err) {
+      // If signup says the account already exists, nudge to the login tab
+      if (mode === "signup" && err.message?.toLowerCase().includes("already exists")) {
+        setMode("login");
+      }
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="min-h-[70vh] flex items-center justify-center px-5">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-sm bg-ink-soft border border-ink-border rounded-xl2 p-8 animate-fade-in-up"
+      >
+        <h1 className="font-display text-2xl font-bold mb-1">Dev panel</h1>
+        <p className="text-sm text-muted mb-6">
+          {mode === "signup"
+            ? "First time here? Sign up with the DEV_EMAIL / DEV_PASSWORD configured on the backend."
+            : "Log in with your dev email and password."}
+        </p>
+
+        <div className="flex gap-1 bg-ink border border-ink-border rounded-xl p-1 mb-5 text-sm">
+          {["signup", "login"].map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => {
+                setMode(m);
+                setError("");
+              }}
+              className={`flex-1 py-2 rounded-lg transition capitalize ${
+                mode === m ? "btn-gradient text-white" : "text-muted hover:text-porcelain"
+              }`}
+            >
+              {m === "signup" ? "Sign up" : "Log in"}
+            </button>
+          ))}
+        </div>
+
+        <label className="block mb-3">
+          <span className="text-sm text-muted mb-1.5 block">Dev email</span>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="dev@example.com"
+            className="w-full rounded-xl bg-ink border border-ink-border px-4 py-3 focus:border-aurora-violet outline-none transition"
+          />
+        </label>
+
+        <label className="block mb-3">
+          <span className="text-sm text-muted mb-1.5 block">Dev password</span>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            className="w-full rounded-xl bg-ink border border-ink-border px-4 py-3 focus:border-aurora-violet outline-none transition"
+          />
+        </label>
+
+        {error && <p className="text-sm text-red-300 mb-3">{error}</p>}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full btn-gradient text-white font-semibold py-3 rounded-xl disabled:opacity-60"
+        >
+          {loading ? "Please wait…" : mode === "signup" ? "Sign up" : "Log in"}
+        </button>
+
+        <p className="text-xs text-muted mt-4 text-center">
+          These must match <code className="text-[11px]">DEV_EMAIL</code> /{" "}
+          <code className="text-[11px]">DEV_PASSWORD</code> in the backend&rsquo;s <code className="text-[11px]">.env</code>.
+        </p>
+      </form>
+    </div>
+  );
+}
+
 export default function DevPanelPage() {
   const [devKey, setDevKey] = useState("");
+  const [devEmail, setDevEmail] = useState("");
   const [unlocked, setUnlocked] = useState(false);
-  const [keyError, setKeyError] = useState("");
 
   const [categories, setCategories] = useState([]);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -27,11 +131,13 @@ export default function DevPanelPage() {
   const [error, setError] = useState("");
   const [created, setCreated] = useState(null);
 
-  // Restore a previously entered key for this browser session
+  // Restore a previously authenticated session for this browser tab
   useEffect(() => {
-    const saved = window.sessionStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      setDevKey(saved);
+    const savedKey = window.sessionStorage.getItem(KEY_STORAGE);
+    const savedEmail = window.sessionStorage.getItem(EMAIL_STORAGE);
+    if (savedKey) {
+      setDevKey(savedKey);
+      setDevEmail(savedEmail || "");
       setUnlocked(true);
     }
   }, []);
@@ -42,15 +148,18 @@ export default function DevPanelPage() {
     }
   }, [unlocked]);
 
-  function handleUnlock(e) {
-    e.preventDefault();
-    setKeyError("");
-    if (!devKey.trim()) {
-      setKeyError("Enter the dev key first.");
-      return;
-    }
-    window.sessionStorage.setItem(STORAGE_KEY, devKey);
+  function handleUnlock(token, email) {
+    window.sessionStorage.setItem(KEY_STORAGE, token);
+    window.sessionStorage.setItem(EMAIL_STORAGE, email);
+    setDevKey(token);
+    setDevEmail(email);
     setUnlocked(true);
+  }
+
+  function handleLock() {
+    window.sessionStorage.removeItem(KEY_STORAGE);
+    window.sessionStorage.removeItem(EMAIL_STORAGE);
+    setUnlocked(false);
   }
 
   function update(field) {
@@ -75,6 +184,7 @@ export default function DevPanelPage() {
       const { product } = await api.createProduct(devKey, {
         name: form.name,
         description: form.description || undefined,
+        detailedDescription: form.detailedDescription || undefined,
         price: Number(form.price),
         comparePrice: form.comparePrice ? Number(form.comparePrice) : undefined,
         imageUrl: form.imageUrl,
@@ -86,9 +196,7 @@ export default function DevPanelPage() {
       setForm(EMPTY_FORM);
     } catch (err) {
       if (err.message?.toLowerCase().includes("invalid dev key")) {
-        // Key was wrong/stale — kick back to the unlock screen
-        window.sessionStorage.removeItem(STORAGE_KEY);
-        setUnlocked(false);
+        handleLock();
       }
       setError(err.message);
     } finally {
@@ -97,50 +205,24 @@ export default function DevPanelPage() {
   }
 
   if (!unlocked) {
-    return (
-      <div className="min-h-[70vh] flex items-center justify-center px-5">
-        <form
-          onSubmit={handleUnlock}
-          className="w-full max-w-sm bg-ink-soft border border-ink-border rounded-xl2 p-8"
-        >
-          <h1 className="font-display text-2xl font-bold mb-1">Dev panel</h1>
-          <p className="text-sm text-muted mb-6">
-            Enter the <code className="text-xs">DEV_SECRET</code> configured on the backend.
-          </p>
-          <input
-            type="password"
-            value={devKey}
-            onChange={(e) => setDevKey(e.target.value)}
-            placeholder="Dev key"
-            className="w-full rounded-xl bg-ink border border-ink-border px-4 py-3 focus:border-aurora-violet outline-none transition mb-3"
-          />
-          {keyError && <p className="text-sm text-red-300 mb-3">{keyError}</p>}
-          <button type="submit" className="w-full btn-gradient text-white font-semibold py-3 rounded-xl">
-            Unlock
-          </button>
-        </form>
-      </div>
-    );
+    return <DevAuthGate onUnlock={handleUnlock} />;
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-5 sm:px-8 py-12">
+    <div className="max-w-2xl mx-auto px-5 sm:px-8 py-12 animate-fade-in-up">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-display text-3xl font-bold">Add a product</h1>
-        <button
-          onClick={() => {
-            window.sessionStorage.removeItem(STORAGE_KEY);
-            setUnlocked(false);
-          }}
-          className="text-sm text-muted hover:text-red-400 transition"
-        >
-          Lock
+        <div>
+          <h1 className="font-display text-3xl font-bold">Add a product</h1>
+          {devEmail && <p className="text-xs text-muted mt-1">Signed in as {devEmail}</p>}
+        </div>
+        <button onClick={handleLock} className="text-sm text-muted hover:text-red-400 transition">
+          Log out
         </button>
       </div>
 
       <p className="text-xs text-muted bg-aurora-gradient-soft border border-aurora-violet/30 rounded-lg px-4 py-2.5 mb-6">
-        This panel is gated by a shared dev key, not a real admin role system — fine for a solo
-        dev or small team, swap for proper role-based auth before opening it up to others.
+        This panel is gated by a single dev identity from env vars, not a full admin/role system —
+        fine for a solo dev or small team, swap for proper role-based auth before opening it up to others.
       </p>
 
       <form onSubmit={handleSubmit} className="bg-ink-soft border border-ink-border rounded-xl2 p-6 sm:p-8 space-y-4">
@@ -155,13 +237,24 @@ export default function DevPanelPage() {
         </label>
 
         <label className="block">
-          <span className="text-sm text-muted mb-1.5 block">Description</span>
+          <span className="text-sm text-muted mb-1.5 block">Short description</span>
           <textarea
             value={form.description}
             onChange={update("description")}
-            rows={3}
+            rows={2}
             className="w-full rounded-xl bg-ink border border-ink-border px-4 py-3 focus:border-aurora-violet outline-none transition resize-none"
             placeholder="Short, specific product description…"
+          />
+        </label>
+
+        <label className="block">
+          <span className="text-sm text-muted mb-1.5 block">Detailed description</span>
+          <textarea
+            value={form.detailedDescription}
+            onChange={update("detailedDescription")}
+            rows={4}
+            className="w-full rounded-xl bg-ink border border-ink-border px-4 py-3 focus:border-aurora-violet outline-none transition resize-none"
+            placeholder="Full spec sheet, materials, what's in the box, care instructions…"
           />
         </label>
 
@@ -179,7 +272,7 @@ export default function DevPanelPage() {
             />
           </label>
           <label className="block">
-            <span className="text-sm text-muted mb-1.5 block">Compare-at price ($)</span>
+            <span className="text-sm text-muted mb-1.5 block">Compare-at (original) price ($)</span>
             <input
               type="number"
               min="0"

@@ -21,9 +21,20 @@ export const api = {
   // Public
   getProducts: (params = "") => request(`/products${params}`),
   getProduct: (slug) => request(`/products/${slug}`),
+  getRelatedProducts: (slug) => request(`/products/${slug}/related`),
   getCategories: () => request("/categories"),
 
-  // Dev panel (shared-secret gated, not real user auth)
+  // Reviews & Q&A
+  getReviews: (slug) => request(`/products/${slug}/reviews`),
+  postReview: (token, slug, body) =>
+    request(`/products/${slug}/reviews`, { token, method: "POST", body }),
+  getQna: (slug) => request(`/products/${slug}/qna`),
+  postQuestion: (token, slug, body) =>
+    request(`/products/${slug}/qna`, { token, method: "POST", body }),
+
+  // Dev panel (email/password gated signup + login, shared dev identity)
+  devSignup: (body) => request("/dev/signup", { method: "POST", body }),
+  devLogin: (body) => request("/dev/login", { method: "POST", body }),
   createProduct: (devKey, body) => request("/products", { devKey, method: "POST", body }),
 
   // Auth-required

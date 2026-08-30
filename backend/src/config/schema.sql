@@ -19,18 +19,51 @@ CREATE TABLE IF NOT EXISTS categories (
 );
 
 CREATE TABLE IF NOT EXISTS products (
+  id                    SERIAL PRIMARY KEY,
+  name                  VARCHAR(160) NOT NULL,
+  slug                  VARCHAR(160) UNIQUE NOT NULL,
+  description           TEXT,
+  detailed_description  TEXT,
+  price                 NUMERIC(10, 2) NOT NULL,
+  compare_price         NUMERIC(10, 2),
+  image_url             TEXT NOT NULL,
+  category_id           INTEGER REFERENCES categories(id) ON DELETE SET NULL,
+  rating                NUMERIC(2, 1) DEFAULT 4.5,
+  stock                 INTEGER DEFAULT 100,
+  is_featured           BOOLEAN DEFAULT false,
+  created_at            TIMESTAMPTZ DEFAULT now()
+);
+
+-- Add the column if this schema is re-run against an older database
+ALTER TABLE products ADD COLUMN IF NOT EXISTS detailed_description TEXT;
+
+CREATE TABLE IF NOT EXISTS reviews (
+  id          SERIAL PRIMARY KEY,
+  product_id  INTEGER REFERENCES products(id) ON DELETE CASCADE,
+  user_id     INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  author_name VARCHAR(120) NOT NULL,
+  rating      SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  comment     TEXT,
+  created_at  TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS product_questions (
   id            SERIAL PRIMARY KEY,
-  name          VARCHAR(160) NOT NULL,
-  slug          VARCHAR(160) UNIQUE NOT NULL,
-  description   TEXT,
-  price         NUMERIC(10, 2) NOT NULL,
-  compare_price NUMERIC(10, 2),
-  image_url     TEXT NOT NULL,
-  category_id   INTEGER REFERENCES categories(id) ON DELETE SET NULL,
-  rating        NUMERIC(2, 1) DEFAULT 4.5,
-  stock         INTEGER DEFAULT 100,
-  is_featured   BOOLEAN DEFAULT false,
+  product_id    INTEGER REFERENCES products(id) ON DELETE CASCADE,
+  user_id       INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  author_name   VARCHAR(120) NOT NULL,
+  question      TEXT NOT NULL,
+  answer        TEXT,
+  answered_at   TIMESTAMPTZ,
   created_at    TIMESTAMPTZ DEFAULT now()
+);
+
+-- Tracks who has completed the one-time dev signup (credentials themselves
+-- live in DEV_EMAIL / DEV_PASSWORD env vars, this just records "already set up")
+CREATE TABLE IF NOT EXISTS dev_admins (
+  id          SERIAL PRIMARY KEY,
+  email       VARCHAR(180) UNIQUE NOT NULL,
+  created_at  TIMESTAMPTZ DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS orders (
@@ -68,3 +101,19 @@ VALUES
   ('Drift Crossbody Bag', 'drift-crossbody-bag', 'Compact vegan-leather crossbody with anti-theft zip.', 55.00, NULL, 'https://images.unsplash.com/photo-1591561954557-26941169b49e?w=800', 3, 4.2, false),
   ('Haven Ceramic Mug Set', 'haven-ceramic-mug-set', 'Set of 2 hand-glazed stoneware mugs, 350ml each.', 32.00, 40.00, 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=800', 4, 4.9, true)
 ON CONFLICT (slug) DO NOTHING;
+
+-- A couple of seed reviews so the product page isn't empty on first run
+INSERT INTO reviews (product_id, author_name, rating, comment)
+SELECT id, 'Morgan T.', 5, 'Exactly as described — build quality feels premium and shipping was fast.'
+FROM products WHERE slug = 'aurora-wireless-headphones'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO reviews (product_id, author_name, rating, comment)
+SELECT id, 'Priya K.', 4, 'Great sound, battery life is a little shorter than advertised but still solid.'
+FROM products WHERE slug = 'aurora-wireless-headphones'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO product_questions (product_id, author_name, question, answer, answered_at)
+SELECT id, 'Sam R.', 'Does this come with a carrying case?', 'Yes, a soft zip case is included in the box.', now()
+FROM products WHERE slug = 'aurora-wireless-headphones'
+ON CONFLICT DO NOTHING;

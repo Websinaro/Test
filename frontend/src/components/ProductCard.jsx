@@ -12,7 +12,7 @@ export default function ProductCard({ product }) {
     : null;
 
   return (
-    <div className="group relative bg-ink-soft border border-ink-border rounded-xl2 overflow-hidden hover:border-aurora-violet/50 transition-colors">
+    <div className="group relative h-full flex flex-col bg-ink-soft border border-ink-border rounded-xl2 overflow-hidden hover:border-aurora-violet/50 hover:-translate-y-1 hover:shadow-glow transition-all duration-300">
       <Link href={`/product/${product.slug}`} className="block">
         <div className="relative aspect-square bg-porcelain overflow-hidden">
           <Image
@@ -30,7 +30,7 @@ export default function ProductCard({ product }) {
         </div>
       </Link>
 
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-1">
         {product.category_name && (
           <p className="text-xs uppercase tracking-wide text-muted mb-1">{product.category_name}</p>
         )}
@@ -46,7 +46,7 @@ export default function ProductCard({ product }) {
           <span className="text-muted ml-1">{Number(product.rating).toFixed(1)}</span>
         </div>
 
-        <div className="flex items-center justify-between mt-3">
+        <div className="flex items-center justify-between mt-auto pt-3">
           <div className="flex items-baseline gap-2">
             <span className="font-display font-bold text-lg gradient-text">
               ${Number(product.price).toFixed(2)}

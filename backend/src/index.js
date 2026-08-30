@@ -9,6 +9,7 @@ const userRoutes = require("./routes/users");
 const productRoutes = require("./routes/products");
 const orderRoutes = require("./routes/orders");
 const categoryRoutes = require("./routes/categories");
+const devRoutes = require("./routes/dev");
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/dev", devRoutes);
 
 app.use((req, res) => res.status(404).json({ error: "Route not found." }));
 

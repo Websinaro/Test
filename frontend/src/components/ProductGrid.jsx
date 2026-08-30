@@ -10,9 +10,15 @@ export default function ProductGrid({ products, emptyMessage = "No products foun
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 auto-rows-fr items-stretch">
+      {products.map((product, i) => (
+        <div
+          key={product.id}
+          className="animate-card-in h-full"
+          style={{ animationDelay: `${Math.min(i, 11) * 45}ms` }}
+        >
+          <ProductCard product={product} />
+        </div>
       ))}
     </div>
   );

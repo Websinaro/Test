@@ -126,13 +126,32 @@ All secrets live in `.env` / `.env.local` files (never committed — see `.gitig
 There's no payment gateway wired in yet, so for now the fastest way to get products into
 the store is the built-in **dev panel** at `/dev` (also linked in the footer):
 
-1. Set `DEV_SECRET` in `backend/.env` to any long random string.
-2. Visit `http://localhost:3000/dev`, enter that same key, and add a product
-   (name, price, image URL, category, stock, featured flag).
-3. It calls `POST /api/products` on the backend with an `x-dev-secret` header —
-   this is a shared-secret gate, not real role-based auth. Fine for a solo dev
-   or small team; swap for a proper `role` column + admin auth before letting
+1. Set `DEV_EMAIL`, `DEV_PASSWORD`, and `DEV_SECRET` in `backend/.env`.
+2. Visit `http://localhost:3000/dev`. The **first time**, use the **Sign up** tab with
+   that same email/password — this just records that setup has happened
+   (`POST /api/dev/signup`). **After that**, use the **Log in** tab with the same
+   credentials (`POST /api/dev/login`).
+3. Either call returns the `DEV_SECRET` as a token, which the panel then sends as an
+   `x-dev-secret` header on `POST /api/products` to add a product (name, price,
+   discount/compare-at price, short + detailed description, image URL, category,
+   stock, featured flag).
+4. This is a single shared dev identity, not real role-based auth. Fine for a solo dev
+   or small team; swap for a proper `role` column + per-user admin auth before letting
    other people use it.
+
+## Search, reviews, Q&A, and related products
+
+- The navbar search box hits `GET /api/products?search=term`, matching product name,
+  description, and category.
+- Each product page has **Reviews** and **Q&A** tabs backed by `reviews` and
+  `product_questions` tables — signed-in users can submit a star rating + comment, or
+  ask a question (`POST /api/products/:slug/reviews`, `POST /api/products/:slug/qna`).
+  Submitting a review recalculates the product's average rating.
+- A **"You may also like"** grid at the bottom of each product page comes from
+  `GET /api/products/:slug/related` (same category, most recent/featured first).
+- Every page transition and the product grid use small CSS-only animations
+  (`src/app/template.jsx`, `animate-card-in` in `globals.css`) — no extra
+  dependencies required.
 
 ## Features included
 
@@ -149,6 +168,7 @@ the store is the built-in **dev panel** at `/dev` (also linked in the footer):
 ## Next steps for production
 
 - Add real payment provider (Stripe/Razorpay) in `checkout`
-- Add product search/filtering, pagination, and an admin panel for CRUD on products
+- Add pagination and a full admin panel for CRUD on products (beyond the dev panel)
 - Add image upload/storage (Firebase Storage or S3) instead of seeded image URLs
-- Add order emails, inventory management, and reviews
+- Add order emails and inventory management
+- Let a dev "answer" open Q&A questions from the dev panel (schema already supports it)
