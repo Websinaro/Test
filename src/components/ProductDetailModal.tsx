@@ -12,6 +12,7 @@ import {
   Plus,
   Minus,
   MessageSquare,
+  Zap,
 } from 'lucide-react';
 import { Product, Review } from '../types/index.ts';
 import { useCart } from '../context/CartContext.tsx';
@@ -23,12 +24,14 @@ interface ProductDetailModalProps {
   product: Product | null;
   onClose: () => void;
   onOpenAuth: () => void;
+  onBuyNow?: (product: Product, quantity: number) => void;
 }
 
 export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   product,
   onClose,
   onOpenAuth,
+  onBuyNow,
 }) => {
   const { addToCart } = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
@@ -40,6 +43,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoadingReviews, setIsLoadingReviews] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const [isBuyingNow, setIsBuyingNow] = useState(false);
 
   // Review Form State
   const [newRating, setNewRating] = useState(5);
@@ -83,6 +87,20 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     setTimeout(() => setIsAdding(false), 900);
   };
 
+  const handleBuyNow = async () => {
+    if (!product || isBuyingNow) return;
+    setIsBuyingNow(true);
+    try {
+      if (onBuyNow) {
+        await onBuyNow(product, quantity);
+      } else {
+        await addToCart(product, quantity);
+      }
+    } finally {
+      setIsBuyingNow(false);
+    }
+  };
+
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
@@ -111,27 +129,33 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-white overflow-y-auto animate-in fade-in duration-150">
       <div
-        className="relative w-full max-w-4xl bg-white text-slate-900 border border-slate-200 rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[94vh] flex flex-col"
+        className="relative w-full min-h-full bg-white text-slate-900 flex flex-col"
         onClick={e => e.stopPropagation()}
       >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          id="close-detail-modal-btn"
-          aria-label="Close"
-          className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 p-2 rounded-xl bg-white/90 hover:bg-slate-100 text-slate-500 hover:text-slate-900 border border-slate-200 shadow-sm transition-all cursor-pointer"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        {/* Sticky Top Bar */}
+        <div className="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-6 py-3 bg-white/95 backdrop-blur-md border-b border-slate-200">
+          <button
+            onClick={onClose}
+            id="close-detail-modal-btn"
+            aria-label="Back"
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-950 font-bold text-xs transition-all cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+            <span className="hidden sm:inline">Close</span>
+          </button>
+          <span className="font-mono text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-400 truncate max-w-[50%]">
+            {product.category_slug}
+          </span>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 overflow-y-auto">
+        <div className="max-w-6xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 flex-1">
           {/* Left Gallery */}
           <div className="p-4 sm:p-6 bg-slate-50/70 flex flex-col justify-between border-b md:border-b-0 md:border-r border-slate-200">
             <div>
               {/* Main Image */}
-              <div className="relative w-full pt-[75%] sm:pt-[80%] rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-sm">
+              <div className="relative w-full pt-[75%] sm:pt-[80%] rounded-lg overflow-hidden bg-white border border-slate-200 shadow-sm">
                 <img
                   src={images[selectedImageIndex] || images[0]}
                   alt={product.title}
@@ -222,7 +246,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </div>
 
               {/* Price & Savings */}
-              <div className="mt-3 sm:mt-4 p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2">
+              <div className="mt-3 sm:mt-4 p-3.5 sm:p-4 rounded-lg bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-xl sm:text-2xl font-black text-slate-900 font-mono">
@@ -394,7 +418,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             </div>
 
             {/* Bottom Actions Bar */}
-            <div className="mt-6 pt-4 border-t border-slate-200 flex items-center gap-3">
+            <div className="mt-6 pt-4 border-t border-slate-200 flex flex-wrap items-center gap-3">
               {/* Quantity Stepper */}
               <div className="flex items-center bg-slate-100 border border-slate-200 rounded-xl p-1">
                 <button
@@ -438,23 +462,35 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 id="modal-add-to-cart-btn"
                 onClick={handleAddToCart}
                 disabled={!product.in_stock || isAdding}
-                className={`flex-1 py-3.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer disabled:opacity-50 ${
+                className={`flex-1 py-3.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 border-2 ${
                   isAdding
-                    ? 'bg-emerald-600 text-white shadow-emerald-600/20'
-                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-blue-600/25'
+                    ? 'bg-emerald-600 border-emerald-600 text-white'
+                    : 'bg-white border-slate-950 text-slate-950 hover:bg-slate-950 hover:text-white'
                 }`}
               >
                 {isAdding ? (
                   <>
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>Added to Cart!</span>
+                    <span>Added!</span>
                   </>
                 ) : (
                   <>
                     <ShoppingBag className="w-4 h-4" />
-                    <span>Add to Cart • ${(Number(product.price) * quantity).toFixed(2)}</span>
+                    <span>Add to Cart</span>
                   </>
                 )}
+              </button>
+
+              {/* Buy Now Button */}
+              <button
+                type="button"
+                id="modal-buy-now-btn"
+                onClick={handleBuyNow}
+                disabled={!product.in_stock || isBuyingNow}
+                className="flex-1 py-3.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer disabled:opacity-50 bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/25"
+              >
+                <Zap className="w-4 h-4" />
+                <span>Buy Now • ${(Number(product.price) * quantity).toFixed(2)}</span>
               </button>
             </div>
           </div>

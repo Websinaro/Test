@@ -170,7 +170,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
       <div
-        className="relative w-full max-w-6xl bg-white text-slate-900 border border-slate-200 rounded-3xl shadow-2xl overflow-hidden my-auto flex flex-col max-h-[94vh]"
+        className="relative w-full max-w-6xl bg-white text-slate-900 border border-slate-200 rounded-xl shadow-2xl overflow-hidden my-auto flex flex-col max-h-[94vh]"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -254,7 +254,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div className="space-y-6">
               {/* KPI Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <div className="p-5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
                   <div>
                     <span className="text-xs text-slate-500 font-semibold">Total Revenue</span>
                     <h3 className="text-xl font-bold font-mono text-slate-900 mt-1">
@@ -267,7 +267,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <div className="p-5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
                   <div>
                     <span className="text-xs text-slate-500 font-semibold">Total Orders</span>
                     <h3 className="text-xl font-bold font-mono text-slate-900 mt-1">
@@ -280,7 +280,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <div className="p-5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
                   <div>
                     <span className="text-xs text-slate-500 font-semibold">Live Products</span>
                     <h3 className="text-xl font-bold font-mono text-slate-900 mt-1">
@@ -293,7 +293,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <div className="p-5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
                   <div>
                     <span className="text-xs text-slate-500 font-semibold">Database Status</span>
                     <h3 className="text-xl font-bold font-mono text-slate-900 mt-1">
@@ -308,7 +308,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
 
               {/* Quick Actions */}
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+              <div className="p-5 rounded-lg bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <h4 className="text-sm font-bold text-slate-900">Inventory Shortcuts</h4>
                   <p className="text-xs text-slate-500">Quickly add a new item or update inventory records</p>
@@ -346,7 +346,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </button>
               </div>
 
-              <div className="overflow-x-auto rounded-2xl border border-slate-200">
+              <div className="overflow-x-auto rounded-lg border border-slate-200">
                 <table className="w-full text-left text-xs text-slate-700">
                   <thead className="bg-slate-100 text-slate-500 uppercase font-bold text-[10px] border-b border-slate-200">
                     <tr>
@@ -417,7 +417,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   orders.map(order => (
                     <div
                       key={order.id}
-                      className="p-4 rounded-2xl bg-white border border-slate-200 space-y-3"
+                      className="p-4 rounded-lg bg-white border border-slate-200 space-y-3"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3 text-xs">
                         <div>
@@ -459,7 +459,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {/* TAB 4: Database Diagnostics */}
           {activeTab === 'database' && (
             <div className="space-y-4">
-              <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-3">
+              <div className="p-5 rounded-lg bg-white border border-slate-200 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Database className="w-5 h-5 text-blue-600" />
@@ -494,7 +494,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {isProductModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
             <div
-              className="w-full max-w-lg bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto my-auto"
+              className="w-full max-w-lg bg-white border border-slate-200 rounded-xl p-4 sm:p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto my-auto"
               onClick={e => e.stopPropagation()}
             >
               <div className="flex items-center justify-between border-b border-slate-200 pb-3">

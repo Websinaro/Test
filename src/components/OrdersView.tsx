@@ -62,7 +62,7 @@ export const OrdersView: React.FC<OrdersViewProps> = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
       <div
-        className="relative w-full max-w-5xl bg-white text-slate-900 border border-slate-200 rounded-3xl shadow-2xl overflow-hidden my-auto flex flex-col max-h-[94vh]"
+        className="relative w-full max-w-5xl bg-white text-slate-900 border border-slate-200 rounded-xl shadow-2xl overflow-hidden my-auto flex flex-col max-h-[94vh]"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -117,7 +117,7 @@ export const OrdersView: React.FC<OrdersViewProps> = ({ isOpen, onClose }) => {
                     <div
                       key={order.id}
                       onClick={() => setSelectedOrder(order)}
-                      className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer ${
+                      className={`p-3.5 sm:p-4 rounded-lg border transition-all cursor-pointer ${
                         selectedOrder?.id === order.id
                           ? 'bg-blue-50/80 border-blue-600 text-slate-900 shadow-sm ring-2 ring-blue-500/20'
                           : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
@@ -140,7 +140,7 @@ export const OrdersView: React.FC<OrdersViewProps> = ({ isOpen, onClose }) => {
 
               {/* Right Order Details & Tracking */}
               {selectedOrder && (
-                <div className="lg:col-span-2 space-y-4 sm:space-y-5 bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200">
+                <div className="lg:col-span-2 space-y-4 sm:space-y-5 bg-slate-50 p-4 sm:p-6 rounded-lg border border-slate-200">
                   {/* Order Top Bar */}
                   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
                     <div>

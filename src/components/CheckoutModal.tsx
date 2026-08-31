@@ -127,7 +127,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
       <div
-        className="relative w-full max-w-3xl bg-white text-slate-900 border border-slate-200 rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[94vh] flex flex-col"
+        className="relative w-full max-w-3xl bg-white text-slate-900 border border-slate-200 rounded-xl shadow-2xl overflow-hidden my-auto max-h-[94vh] flex flex-col"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -301,7 +301,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <button
                 type="button"
                 onClick={() => setPaymentMethod('card')}
-                className={`p-3 sm:p-3.5 rounded-2xl border text-center transition-all cursor-pointer ${
+                className={`p-3 sm:p-3.5 rounded-lg border text-center transition-all cursor-pointer ${
                   paymentMethod === 'card'
                     ? 'bg-blue-50/80 border-blue-600 text-blue-900 shadow-sm ring-2 ring-blue-500/20'
                     : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
@@ -315,7 +315,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <button
                 type="button"
                 onClick={() => setPaymentMethod('gpay')}
-                className={`p-3 sm:p-3.5 rounded-2xl border text-center transition-all cursor-pointer ${
+                className={`p-3 sm:p-3.5 rounded-lg border text-center transition-all cursor-pointer ${
                   paymentMethod === 'gpay'
                     ? 'bg-blue-50/80 border-blue-600 text-blue-900 shadow-sm ring-2 ring-blue-500/20'
                     : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
@@ -329,7 +329,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <button
                 type="button"
                 onClick={() => setPaymentMethod('cod')}
-                className={`p-3 sm:p-3.5 rounded-2xl border text-center transition-all cursor-pointer ${
+                className={`p-3 sm:p-3.5 rounded-lg border text-center transition-all cursor-pointer ${
                   paymentMethod === 'cod'
                     ? 'bg-blue-50/80 border-blue-600 text-blue-900 shadow-sm ring-2 ring-blue-500/20'
                     : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
@@ -343,7 +343,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
             {/* Card Inputs if card selected */}
             {paymentMethod === 'card' && (
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+              <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Card Number
@@ -396,7 +396,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             )}
 
             {/* Order Review List */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
               <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                 Order Summary ({cart.length} items)
               </h4>
@@ -478,7 +478,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             </div>
 
             {/* Receipt Summary Box */}
-            <div className="max-w-md mx-auto p-5 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-3 font-mono text-xs">
+            <div className="max-w-md mx-auto p-5 rounded-lg bg-slate-50 border border-slate-200 text-left space-y-3 font-mono text-xs">
               <div className="flex justify-between border-b border-slate-200 pb-2">
                 <span className="text-slate-500 font-sans font-medium">Order Number</span>
                 <span className="font-bold text-blue-600">{createdOrder.order_number}</span>

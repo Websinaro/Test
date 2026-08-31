@@ -4,60 +4,53 @@ import { Award, Truck, RotateCcw, Lock } from 'lucide-react';
 export const OffersStrip: React.FC = () => {
   const pillars = [
     {
-      icon: <Award className="w-4 h-4 text-blue-600" />,
-      title: 'Certified Quality Hardware',
-      subtitle: 'Original manufacturer warranty',
-      badge: 'VERIFIED',
-      bgColor: 'bg-blue-50/50 hover:bg-blue-50/80',
-      borderColor: 'border-blue-100/80',
+      icon: <Award className="w-4 h-4" />,
+      title: 'Certified Hardware',
+      subtitle: 'Manufacturer warranty',
+      stat: '100%',
     },
     {
-      icon: <Truck className="w-4 h-4 text-emerald-600" />,
-      title: 'Free Express Shipping',
-      subtitle: 'Complimentary on orders over $150',
-      badge: 'FAST',
-      bgColor: 'bg-emerald-50/50 hover:bg-emerald-50/80',
-      borderColor: 'border-emerald-100/80',
+      icon: <Truck className="w-4 h-4" />,
+      title: 'Express Shipping',
+      subtitle: 'Free over $150',
+      stat: '24H',
     },
     {
-      icon: <RotateCcw className="w-4 h-4 text-purple-600" />,
-      title: '30-Day Easy Returns',
-      subtitle: 'Hassle-free money-back guarantee',
-      badge: 'RISK-FREE',
-      bgColor: 'bg-purple-50/50 hover:bg-purple-50/80',
-      borderColor: 'border-purple-100/80',
+      icon: <RotateCcw className="w-4 h-4" />,
+      title: 'Easy Returns',
+      subtitle: 'No-questions policy',
+      stat: '30D',
     },
     {
-      icon: <Lock className="w-4 h-4 text-amber-600" />,
+      icon: <Lock className="w-4 h-4" />,
       title: 'Secure Checkout',
-      subtitle: '256-bit encrypted data protection',
-      badge: 'ENCRYPTED',
-      bgColor: 'bg-amber-50/50 hover:bg-amber-50/80',
-      borderColor: 'border-amber-100/80',
+      subtitle: 'Encrypted end-to-end',
+      stat: '256B',
     },
   ];
 
   return (
-    <div className="bg-white/90 backdrop-blur-md border border-slate-200/90 rounded-2xl p-3 sm:p-4 mb-8 shadow-xs overflow-x-auto scrollbar-none">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 min-w-[580px] lg:min-w-0">
+    <div className="mb-8 rounded-xl border border-slate-800 bg-slate-950 shadow-sm overflow-x-auto scrollbar-none">
+      <div className="grid grid-cols-2 lg:grid-cols-4 divide-y divide-slate-800 lg:divide-y-0 lg:divide-x min-w-[560px] lg:min-w-0">
         {pillars.map((pillar, i) => (
           <div
             key={i}
-            className={`group relative flex items-center gap-3 p-3 rounded-xl ${pillar.bgColor} border ${pillar.borderColor} transition-all duration-300 hover:shadow-sm hover:-translate-y-0.5`}
+            className="group flex items-center gap-3 px-4 py-3.5 hover:bg-slate-900/70 transition-colors"
           >
-            <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-xs border border-slate-200/60 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 shrink-0 rounded-lg bg-slate-900 border border-slate-800 text-blue-400 flex items-center justify-center group-hover:border-blue-500/50 group-hover:text-blue-300 transition-colors">
               {pillar.icon}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between gap-1">
-                <h4 className="text-xs font-bold text-slate-900 truncate">
-                  {pillar.title}
-                </h4>
-              </div>
-              <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+              <h4 className="text-[11px] sm:text-xs font-bold text-white truncate tracking-tight">
+                {pillar.title}
+              </h4>
+              <p className="text-[10px] text-slate-500 font-medium truncate">
                 {pillar.subtitle}
               </p>
             </div>
+            <span className="font-mono text-[10px] font-bold text-slate-600 group-hover:text-blue-400 shrink-0 transition-colors">
+              {pillar.stat}
+            </span>
           </div>
         ))}
       </div>

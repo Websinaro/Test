@@ -71,7 +71,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   const slide = heroStories[currentSlide];
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-slate-950 text-white border border-slate-800 shadow-2xl mb-8 group select-none">
+    <div className="relative overflow-hidden rounded-xl bg-slate-950 text-white border border-slate-800 shadow-2xl mb-8 group select-none">
       {/* Background Gradient & Animated Dynamic Glow */}
       <div className={`relative bg-gradient-to-br ${slide.themeColor} transition-all duration-700`}>
         <div className={`absolute top-0 right-1/4 w-96 h-96 ${slide.accentGlow} rounded-full blur-3xl pointer-events-none transition-all duration-700 animate-pulse-subtle`} />
@@ -161,9 +161,9 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                 className="relative w-full max-w-md group/frame"
               >
                 {/* Decorative Frame Border */}
-                <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-500/30 to-indigo-500/30 rounded-3xl blur-md opacity-75 group-hover/frame:opacity-100 transition duration-500"></div>
+                <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-500/30 to-indigo-500/30 rounded-xl blur-md opacity-75 group-hover/frame:opacity-100 transition duration-500"></div>
 
-                <div className="relative bg-slate-900/90 rounded-2xl p-4 border border-white/15 shadow-2xl backdrop-blur-xl space-y-3">
+                <div className="relative bg-slate-900/90 rounded-lg p-4 border border-white/15 shadow-2xl backdrop-blur-xl space-y-3">
                   {/* Frame Header */}
                   <div className="flex items-center justify-between text-xs pb-2 border-b border-white/10">
                     <div className="flex items-center gap-2">

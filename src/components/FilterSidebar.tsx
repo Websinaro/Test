@@ -66,7 +66,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   ];
 
   return (
-    <div className={`bg-white ${isMobileDrawer ? 'p-6' : 'rounded-3xl border border-slate-200/90 p-5 shadow-xs'} space-y-6 text-slate-800`}>
+    <div className={`bg-white ${isMobileDrawer ? 'p-6' : 'rounded-xl border border-slate-200/90 p-5 shadow-xs'} space-y-6 text-slate-800`}>
       {/* Header: Title and Clear All */}
       <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
         <div className="flex items-center gap-2">
@@ -100,7 +100,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
       {/* 1. Certified Quality Filter */}
       <div className="pb-4 border-b border-slate-100">
-        <label className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 cursor-pointer transition-all">
+        <label className="flex items-center justify-between p-3 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80 cursor-pointer transition-all">
           <div className="flex items-center gap-2.5">
             <span className="px-2 py-0.5 rounded-md bg-slate-950 text-white font-mono font-bold text-[9px] tracking-widest uppercase">
               CERTIFIED
@@ -298,7 +298,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         <div className="pt-4 border-t border-slate-200">
           <button
             onClick={onCloseMobileDrawer}
-            className="w-full py-3 rounded-2xl bg-slate-950 text-white font-bold text-xs uppercase tracking-wider shadow-lg cursor-pointer"
+            className="w-full py-3 rounded-lg bg-slate-950 text-white font-bold text-xs uppercase tracking-wider shadow-lg cursor-pointer"
           >
             Apply Filters
           </button>

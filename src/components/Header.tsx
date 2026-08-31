@@ -65,6 +65,17 @@ export const Header: React.FC<HeaderProps> = ({
   const [deliveryLocation, setDeliveryLocation] = useState('New York, NY 10001');
   const [isChangingLocation, setIsChangingLocation] = useState(false);
   const [tempLocation, setTempLocation] = useState(deliveryLocation);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const mobileSearchInputRef = React.useRef<HTMLInputElement | null>(null);
+
+  const openMobileSearch = () => {
+    setIsMobileSearchOpen(true);
+    setTimeout(() => mobileSearchInputRef.current?.focus(), 320);
+  };
+
+  const closeMobileSearch = () => {
+    setIsMobileSearchOpen(false);
+  };
 
   const handleLocationSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,8 +161,8 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </button>
 
-          {/* Center Search Input */}
-          <div className="flex-1 min-w-0 max-w-xl mx-1 sm:mx-4">
+          {/* Center Search Input — Desktop / Tablet */}
+          <div className="hidden sm:block flex-1 min-w-0 max-w-xl mx-1 sm:mx-4">
             <div className="relative flex items-center bg-slate-100/90 hover:bg-slate-100 focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-600/30 focus-within:border-blue-600 rounded-xl border border-slate-200 transition-all">
               <div className="pl-3.5 text-slate-400">
                 <Search className="w-4 h-4" />
@@ -192,6 +203,18 @@ export const Header: React.FC<HeaderProps> = ({
                 </select>
               </div>
             </div>
+          </div>
+
+          {/* Search — Mobile: icon button that expands into an animated field */}
+          <div className="flex sm:hidden flex-1 min-w-0 justify-end">
+            <button
+              onClick={openMobileSearch}
+              id="mobile-search-toggle-btn"
+              aria-label="Open Search"
+              className="p-2 rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200/80 border border-slate-200 transition-colors cursor-pointer"
+            >
+              <Search className="w-4 h-4" />
+            </button>
           </div>
 
           {/* Right Action Icons & User Menu */}
@@ -265,7 +288,7 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Account Dropdown */}
               {userDropdownOpen && user && (
                 <div
-                  className="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 text-slate-800 animate-in fade-in slide-in-from-top-2 duration-150"
+                  className="absolute right-0 mt-2 w-60 bg-white rounded-lg shadow-xl border border-slate-200 py-2 z-50 text-slate-800 animate-in fade-in slide-in-from-top-2 duration-150"
                   onMouseLeave={() => setUserDropdownOpen(false)}
                 >
                   <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/70">
@@ -335,6 +358,50 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
+      {/* Animated Mobile Search Overlay */}
+      <div
+        className={`sm:hidden absolute inset-x-0 top-0 z-30 bg-white border-b border-slate-200/80 overflow-hidden transition-all duration-300 ease-out ${
+          isMobileSearchOpen ? 'h-[60px] opacity-100' : 'h-0 opacity-0 pointer-events-none'
+        }`}
+      >
+        <div className="flex items-center gap-2 px-3 h-[60px]">
+          <div
+            className={`relative flex-1 flex items-center bg-slate-100 rounded-xl border border-slate-200 transition-all duration-300 ease-out origin-left ${
+              isMobileSearchOpen ? 'scale-x-100 opacity-100' : 'scale-x-75 opacity-0'
+            }`}
+          >
+            <div className="pl-3 text-slate-400">
+              <Search className="w-4 h-4" />
+            </div>
+            <input
+              ref={mobileSearchInputRef}
+              id="mobile-search-input"
+              type="text"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder="Search hardware..."
+              className="w-full px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 bg-transparent focus:outline-none"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => onSearchChange('')}
+                className="p-1.5 text-slate-400 hover:text-slate-600 mr-1 rounded-lg hover:bg-slate-200 transition-colors cursor-pointer"
+                aria-label="Clear Search"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+          <button
+            onClick={closeMobileSearch}
+            aria-label="Close Search"
+            className="p-2.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
       {/* 3. Curated Department Strip (Modern Pill Navigation) */}
       <div className="border-t border-slate-200/70 bg-slate-50/50 overflow-x-auto scrollbar-none">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-2 sm:gap-4 min-w-max">
@@ -379,7 +446,7 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Pincode & Destination Modal */}
       {isChangingLocation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, Heart, ShoppingBag, Eye, Check, Sparkles, ShieldCheck, Truck } from 'lucide-react';
+import { Star, Heart, ShoppingBag, Eye, Check, Zap, ShieldCheck, Truck } from 'lucide-react';
 import { Product } from '../types/index.ts';
 import { useCart } from '../context/CartContext.tsx';
 import { useWishlist } from '../context/WishlistContext.tsx';
@@ -7,9 +7,10 @@ import { useWishlist } from '../context/WishlistContext.tsx';
 interface ProductListRowProps {
   product: Product;
   onQuickView: (product: Product) => void;
+  onBuyNow?: (product: Product) => void;
 }
 
-export const ProductListRow: React.FC<ProductListRowProps> = ({ product, onQuickView }) => {
+export const ProductListRow: React.FC<ProductListRowProps> = ({ product, onQuickView, onBuyNow }) => {
   const { addToCart } = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
 
@@ -21,6 +22,11 @@ export const ProductListRow: React.FC<ProductListRowProps> = ({ product, onQuick
     setIsAdding(true);
     await addToCart(product, 1);
     setTimeout(() => setIsAdding(false), 800);
+  };
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onBuyNow?.(product);
   };
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
@@ -36,10 +42,10 @@ export const ProductListRow: React.FC<ProductListRowProps> = ({ product, onQuick
     <div
       id={`product-list-row-${product.id}`}
       onClick={() => onQuickView(product)}
-      className="group relative flex flex-col md:flex-row items-center justify-between gap-6 bg-white border border-slate-200/90 hover:border-slate-400/80 rounded-3xl p-4 sm:p-5 transition-all duration-200 hover:shadow-lg cursor-pointer"
+      className="group relative flex flex-col md:flex-row items-center justify-between gap-6 bg-white border border-slate-200 hover:border-slate-900 rounded-xl p-4 sm:p-5 transition-all duration-200 hover:shadow-lg cursor-pointer"
     >
       {/* Product Image Frame */}
-      <div className="relative w-full md:w-56 h-48 bg-gradient-to-b from-slate-50 to-slate-100/60 rounded-2xl overflow-hidden shrink-0 border border-slate-100 flex items-center justify-center">
+      <div className="relative w-full md:w-56 h-48 bg-slate-50 rounded-lg overflow-hidden shrink-0 border border-slate-100 flex items-center justify-center">
         <img
           src={mainImage}
           alt={product.title}
@@ -135,13 +141,24 @@ export const ProductListRow: React.FC<ProductListRowProps> = ({ product, onQuick
         </div>
 
         <div className="space-y-2 pt-1">
+          {onBuyNow && (
+            <button
+              onClick={handleBuyNow}
+              disabled={!product.in_stock}
+              className="w-full py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/25 shadow-sm"
+            >
+              <Zap className="w-3.5 h-3.5" />
+              <span>Buy Now</span>
+            </button>
+          )}
+
           <button
             onClick={handleAddToCart}
             disabled={!product.in_stock || isAdding}
-            className={`w-full py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer ${
+            className={`w-full py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer border-2 ${
               isAdding
-                ? 'bg-emerald-600 text-white'
-                : 'bg-slate-950 hover:bg-blue-600 text-white'
+                ? 'bg-emerald-600 border-emerald-600 text-white'
+                : 'bg-white border-slate-950 text-slate-950 hover:bg-slate-950 hover:text-white'
             }`}
           >
             {isAdding ? (
@@ -162,7 +179,7 @@ export const ProductListRow: React.FC<ProductListRowProps> = ({ product, onQuick
               e.stopPropagation();
               onQuickView(product);
             }}
-            className="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-slate-200"
+            className="w-full py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-slate-200"
           >
             <Eye className="w-3.5 h-3.5" />
             <span>Quick View</span>

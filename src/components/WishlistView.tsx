@@ -22,7 +22,7 @@ export const WishlistView: React.FC<WishlistViewProps> = ({ onQuickView }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-150">
       <div
-        className="relative w-full max-w-4xl bg-white text-slate-900 border border-slate-200 rounded-3xl shadow-2xl overflow-hidden my-auto flex flex-col max-h-[94vh]"
+        className="relative w-full max-w-4xl bg-white text-slate-900 border border-slate-200 rounded-xl shadow-2xl overflow-hidden my-auto flex flex-col max-h-[94vh]"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -54,7 +54,7 @@ export const WishlistView: React.FC<WishlistViewProps> = ({ onQuickView }) => {
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           {wishlist.length === 0 ? (
             <div className="py-16 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4 border border-rose-100">
+              <div className="w-16 h-16 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4 border border-rose-100">
                 <Heart className="w-8 h-8" />
               </div>
               <h3 className="text-base font-bold text-slate-900">Your wishlist is currently empty</h3>
@@ -78,7 +78,7 @@ export const WishlistView: React.FC<WishlistViewProps> = ({ onQuickView }) => {
                 return (
                   <div
                     key={product.id}
-                    className="p-4 rounded-2xl bg-white border border-slate-200 flex flex-col justify-between group hover:border-blue-500/50 hover:shadow-md transition-all"
+                    className="p-4 rounded-lg bg-white border border-slate-200 flex flex-col justify-between group hover:border-blue-500/50 hover:shadow-md transition-all"
                   >
                     <div>
                       <div className="relative pt-[70%] rounded-xl overflow-hidden bg-slate-100 mb-3">

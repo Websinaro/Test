@@ -98,7 +98,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onProceedToCheckout }) =
           <div className="flex-1 overflow-y-auto p-5 space-y-4">
             {cart.length === 0 ? (
               <div className="text-center py-16 px-4">
-                <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto text-blue-500 mb-4 border border-blue-100">
+                <div className="w-16 h-16 rounded-lg bg-blue-50 flex items-center justify-center mx-auto text-blue-500 mb-4 border border-blue-100">
                   <ShoppingBag className="w-8 h-8" />
                 </div>
                 <h3 className="text-base font-bold text-slate-900">Your cart is currently empty</h3>
@@ -123,7 +123,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onProceedToCheckout }) =
                 return (
                   <div
                     key={item.product_id}
-                    className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex gap-3.5 items-center hover:border-slate-300 transition-all"
+                    className="p-3.5 rounded-lg bg-slate-50 border border-slate-200 flex gap-3.5 items-center hover:border-slate-300 transition-all"
                   >
                     <img
                       src={image}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, Heart, ShoppingBag, Eye, Check, Sparkles, Truck } from 'lucide-react';
+import { Star, Heart, ShoppingBag, Eye, Check, Zap } from 'lucide-react';
 import { Product } from '../types/index.ts';
 import { useCart } from '../context/CartContext.tsx';
 import { useWishlist } from '../context/WishlistContext.tsx';
@@ -7,9 +7,10 @@ import { useWishlist } from '../context/WishlistContext.tsx';
 interface ProductCardProps {
   product: Product;
   onQuickView: (product: Product) => void;
+  onBuyNow?: (product: Product) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, onBuyNow }) => {
   const { addToCart } = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
 
@@ -21,6 +22,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
     setIsAdding(true);
     await addToCart(product, 1);
     setTimeout(() => setIsAdding(false), 800);
+  };
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onBuyNow?.(product);
   };
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
@@ -36,13 +42,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
     <div
       id={`product-card-${product.id}`}
       onClick={() => onQuickView(product)}
-      className="group relative flex flex-col justify-between bg-white border border-slate-200/90 hover:border-slate-400/80 rounded-3xl p-3.5 sm:p-4 transition-all duration-300 hover:shadow-xl cursor-pointer"
+      className="group relative flex flex-col justify-between bg-white border border-slate-200 hover:border-slate-900 rounded-xl p-3.5 sm:p-4 transition-all duration-200 hover:shadow-lg cursor-pointer"
     >
       {/* Top Floating Badges & Wishlist Action */}
       <div className="flex items-center justify-between z-10 mb-2.5">
         <div className="flex flex-wrap items-center gap-1.5">
           {product.badge && (
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-950 text-white uppercase tracking-wider">
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-950 text-white uppercase tracking-wider">
               {product.badge}
             </span>
           )}
@@ -52,7 +58,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
           onClick={handleWishlistToggle}
           id={`wishlist-toggle-${product.id}`}
           aria-label="Toggle Wishlist"
-          className={`p-2 rounded-xl transition-all shadow-xs cursor-pointer ${
+          className={`p-2 rounded-lg transition-all cursor-pointer ${
             wishlisted
               ? 'bg-rose-500 text-white'
               : 'bg-white text-slate-400 hover:text-rose-500 hover:bg-slate-50 border border-slate-200'
@@ -63,18 +69,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
       </div>
 
       {/* Product Image Frame */}
-      <div className="relative w-full pt-[80%] bg-gradient-to-b from-slate-50 to-slate-100/60 rounded-2xl overflow-hidden mb-3.5 border border-slate-100 flex items-center justify-center">
+      <div className="relative w-full pt-[80%] bg-slate-50 rounded-lg overflow-hidden mb-3.5 border border-slate-100 flex items-center justify-center">
         <img
           src={mainImage}
           alt={product.title}
           referrerPolicy="no-referrer"
-          className="absolute inset-0 w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500"
+          className="absolute inset-0 w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
 
         {/* Quick View Floating Pill on Hover */}
-        <div className="absolute inset-x-0 bottom-2.5 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-          <span className="px-3 py-1.5 rounded-xl bg-slate-950/90 text-white text-[11px] font-mono font-bold flex items-center gap-1.5 shadow-lg backdrop-blur-md pointer-events-auto hover:bg-slate-950">
+        <div className="absolute inset-x-0 bottom-2.5 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none">
+          <span className="px-3 py-1.5 rounded-lg bg-slate-950 text-white text-[11px] font-mono font-bold flex items-center gap-1.5 shadow-lg pointer-events-auto">
             <Eye className="w-3.5 h-3.5 text-blue-400" />
             QUICK VIEW
           </span>
@@ -129,30 +135,45 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
             <span className="text-slate-400 font-mono">Free Delivery</span>
           </div>
 
-          {/* Add to Cart Button */}
-          <button
-            onClick={handleAddToCart}
-            disabled={!product.in_stock || isAdding}
-            id={`add-to-cart-${product.id}`}
-            aria-label="Add to cart"
-            className={`mt-2 w-full py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer disabled:opacity-50 ${
-              isAdding
-                ? 'bg-emerald-600 text-white'
-                : 'bg-slate-950 hover:bg-blue-600 text-white active:scale-[0.98]'
-            }`}
-          >
-            {isAdding ? (
-              <>
-                <Check className="w-3.5 h-3.5" />
-                <span>Added to Cart</span>
-              </>
-            ) : (
-              <>
-                <ShoppingBag className="w-3.5 h-3.5" />
-                <span>Add to Cart</span>
-              </>
+          {/* Actions Row */}
+          <div className="mt-2 flex items-center gap-1.5">
+            <button
+              onClick={handleAddToCart}
+              disabled={!product.in_stock || isAdding}
+              id={`add-to-cart-${product.id}`}
+              aria-label="Add to cart"
+              className={`flex-1 py-2.5 rounded-lg font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 ${
+                isAdding
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-white border border-slate-950 text-slate-950 hover:bg-slate-950 hover:text-white active:scale-[0.98]'
+              }`}
+            >
+              {isAdding ? (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Added</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  <span>Add to Cart</span>
+                </>
+              )}
+            </button>
+
+            {onBuyNow && (
+              <button
+                onClick={handleBuyNow}
+                disabled={!product.in_stock}
+                id={`buy-now-${product.id}`}
+                aria-label="Buy now"
+                title="Buy Now"
+                className="p-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all cursor-pointer disabled:opacity-50 active:scale-[0.98]"
+              >
+                <Zap className="w-3.5 h-3.5" />
+              </button>
             )}
-          </button>
+          </div>
         </div>
       </div>
     </div>

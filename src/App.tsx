@@ -36,7 +36,7 @@ import {
 
 function MainStoreContent() {
   const { user } = useAuth();
-  const { openCart } = useCart();
+  const { openCart, addToCart } = useCart();
   const { openWishlist } = useWishlist();
 
   // Catalog Data States
@@ -254,7 +254,7 @@ function MainStoreContent() {
           {/* Right Product Grid & Sorting Toolbar */}
           <section className="flex-1 w-full space-y-4">
             {/* Top Toolbar */}
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-xs">
+            <div className="bg-white border border-slate-200/90 rounded-lg p-3.5 shadow-xs">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 {/* Left: Result Count */}
                 <div className="flex items-center gap-2.5">
@@ -428,14 +428,14 @@ function MainStoreContent() {
 
             {/* Product Cards Listing */}
             {loading ? (
-              <div className="py-24 text-center bg-white rounded-3xl border border-slate-200">
+              <div className="py-24 text-center bg-white rounded-xl border border-slate-200">
                 <div className="w-10 h-10 border-2 border-slate-950 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
                 <h3 className="text-xs font-mono font-bold text-slate-800 uppercase tracking-wider">
                   Loading Atelier Catalog...
                 </h3>
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className="py-16 text-center bg-white rounded-3xl border border-slate-200 p-8 shadow-xs">
+              <div className="py-16 text-center bg-white rounded-xl border border-slate-200 p-8 shadow-xs">
                 <Package className="w-12 h-12 text-slate-300 mx-auto mb-3" />
                 <h3 className="text-base font-extrabold text-slate-900">No hardware found matching criteria</h3>
                 <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
@@ -455,6 +455,10 @@ function MainStoreContent() {
                     key={product.id}
                     product={product}
                     onQuickView={(prod) => setSelectedProduct(prod)}
+                    onBuyNow={async (prod) => {
+                      await addToCart(prod, 1);
+                      setIsCheckoutOpen(true);
+                    }}
                   />
                 ))}
               </div>
@@ -465,6 +469,10 @@ function MainStoreContent() {
                     key={product.id}
                     product={product}
                     onQuickView={(prod) => setSelectedProduct(prod)}
+                    onBuyNow={async (prod) => {
+                      await addToCart(prod, 1);
+                      setIsCheckoutOpen(true);
+                    }}
                   />
                 ))}
               </div>
@@ -542,6 +550,11 @@ function MainStoreContent() {
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
         onOpenAuth={() => setIsAuthModalOpen(true)}
+        onBuyNow={async (product, quantity) => {
+          await addToCart(product, quantity);
+          setSelectedProduct(null);
+          setIsCheckoutOpen(true);
+        }}
       />
 
       <CartDrawer onProceedToCheckout={() => setIsCheckoutOpen(true)} />

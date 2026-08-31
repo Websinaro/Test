@@ -37,7 +37,7 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
     window.addEventListener('resize', handleResize);
 
     // Particle nodes configuration
-    const particleCount = Math.min(Math.floor(width / 35), 45);
+    const particleCount = Math.min(Math.floor(width / 55), 26);
     const particles: Array<{
       x: number;
       y: number;
@@ -150,15 +150,17 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-      {/* 1. Precision Technical Grid Background Pattern */}
+      {/* 1. Precision Technical Grid Background Pattern — small, low-opacity, sits strictly behind content */}
       <div
-        className="absolute inset-0 opacity-[0.45]"
+        className="absolute inset-0 opacity-[0.22]"
         style={{
           backgroundImage: `
-            linear-gradient(to right, rgba(203, 213, 225, 0.4) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(203, 213, 225, 0.4) 1px, transparent 1px)
+            linear-gradient(to right, rgba(203, 213, 225, 0.35) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(203, 213, 225, 0.35) 1px, transparent 1px)
           `,
-          backgroundSize: '48px 48px',
+          backgroundSize: '22px 22px',
+          maskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%)',
         }}
       />
 

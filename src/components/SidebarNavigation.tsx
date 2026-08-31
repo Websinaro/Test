@@ -140,7 +140,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
         {/* 2. Scrollable Body Content */}
         <div className="flex-1 overflow-y-auto divide-y divide-slate-100 p-4 sm:p-5 space-y-6">
           {/* User Account Quick Card */}
-          <div className="bg-slate-50 border border-slate-200/90 rounded-2xl p-4">
+          <div className="bg-slate-50 border border-slate-200/90 rounded-lg p-4">
             {user ? (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
