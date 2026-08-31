@@ -226,7 +226,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
             key={s.id}
             onClick={() => setCurrentSlide(index)}
             aria-label={`Slide ${index + 1}`}
-            className={`h-1.5 rounded-full transition-all cursor-pointer ${
+            className={`tap-target-auto h-1.5 rounded-full transition-all cursor-pointer ${
               currentSlide === index ? 'w-8 bg-blue-500' : 'w-2 bg-white/30 hover:bg-white/60'
             }`}
           />

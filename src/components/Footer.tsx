@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
 import {
   ShieldCheck,
-  Truck,
-  RotateCcw,
-  Headphones,
   CheckCircle2,
   Lock,
-  Globe,
   ArrowRight,
-  Sparkles,
   Mail,
-  Zap,
 } from 'lucide-react';
 
 interface FooterProps {}
@@ -94,15 +88,6 @@ export const Footer: React.FC<FooterProps> = () => {
           <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
             Curated precision hardware, custom acoustic listening monitors, high-throughput silicon workstations, and biometric accessories. Calibrated for uncompromising professionals.
           </p>
-
-          <div className="pt-2 flex items-center gap-3 text-slate-400 text-[11px] font-mono">
-            <span className="flex items-center gap-1 text-emerald-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              99.98% System Uptime
-            </span>
-            <span>•</span>
-            <span>SOC2 Type II Certified</span>
-          </div>
         </div>
 
         {/* Column 1: Hardware Catalog */}
@@ -154,23 +139,15 @@ export const Footer: React.FC<FooterProps> = () => {
         </div>
       </div>
 
-      {/* 3. Bottom Legal & Protocols Bar */}
+      {/* 3. Bottom Legal Bar */}
       <div className="border-t border-slate-900 bg-slate-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-2 text-[11px] font-mono text-slate-500 text-center">
           <div>
-            © {new Date().getFullYear()} NEXUS ATELIER INC. ALL RIGHTS RESERVED.
+            © {new Date().getFullYear()} Nexus Atelier Inc. All rights reserved.
           </div>
-
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1 text-slate-400">
-              <Lock className="w-3 h-3 text-blue-400" />
-              <span>TLS 1.3 // AES-256</span>
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1 text-slate-400">
-              <Globe className="w-3 h-3 text-emerald-400" />
-              <span>GLOBAL CDN ACTIVE</span>
-            </span>
+          <div className="flex items-center gap-1.5 text-slate-500">
+            <Lock className="w-3 h-3 text-slate-500" />
+            <span>Secure checkout</span>
           </div>
         </div>
       </div>

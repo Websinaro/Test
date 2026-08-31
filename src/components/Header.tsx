@@ -97,7 +97,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between gap-2 sm:gap-6">
           {/* Brand Logo & Sidebar Menu Toggle */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <button
               onClick={onOpenSidebar}
               id="sidebar-toggle-btn"
@@ -151,7 +151,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* Center Search Input */}
-          <div className="flex-1 max-w-xl mx-1 sm:mx-4">
+          <div className="flex-1 min-w-0 max-w-xl mx-1 sm:mx-4">
             <div className="relative flex items-center bg-slate-100/90 hover:bg-slate-100 focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-600/30 focus-within:border-blue-600 rounded-xl border border-slate-200 transition-all">
               <div className="pl-3.5 text-slate-400">
                 <Search className="w-4 h-4" />
@@ -195,7 +195,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Right Action Icons & User Menu */}
-          <div className="flex items-center gap-1.5 sm:gap-3">
+          <div className="flex items-center gap-1 sm:gap-3 shrink-0">
             {/* Wishlist Pill */}
             <button
               onClick={openWishlist}
